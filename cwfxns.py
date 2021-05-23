@@ -82,7 +82,7 @@ def select_browser():
     return webdrivers.pop()
 
 
-def send_twilio_message(message=None, media_url=None, recipient=None):
+def send_twilio_message(message=None, media_url=None, recipient_phone_number=None):
     """
     Sends an SMS/MMS via twilio. Won't send unless either 'message' or 'media_url' is provided.
     See https://automatetheboringstuff.com/2e/chapter18/ for information on how to set up a free twilio account.
@@ -91,14 +91,14 @@ def send_twilio_message(message=None, media_url=None, recipient=None):
         Parameters:
             message (string): the text message body (defaults to None)
             media_url (string): the optional media/MMS url (defaults to None)
-            recipient (string): recipient phone number, including country and area codes (ex. '+11238675309', defaults to None)
+            recipient_phone_number (string): recipient phone number, including country and area codes (ex. '+11238675309', defaults to None)
 
         These environment variables must be set:
             TWILIO_ACCOUNT_SID (string): twilio account SID
             TWILIO_AUTH_TOKEN (string): twilio auth token
             TWILIO_PHONE_NUMBER (string): twilio phone number, including country and area codes (ex. '+11238675309')
             MY_CELL_NUMBER (string): your cell number, including country and area codes (ex. '+11238675309')
-                - if MY_CELL_NUMBER is set and no recipient is specified, will default to MY_CELL_NUMBER
+                - if MY_CELL_NUMBER is set and no recipient is specified, param recipient_phone_number will default to MY_CELL_NUMBER
     """
 
     if message or media_url:
@@ -141,4 +141,3 @@ def show_header(title_string):
     print(bar)
     print(title)
     print(bar)
-
