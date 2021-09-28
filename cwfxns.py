@@ -52,26 +52,31 @@ def press_enter_to_quit():
 def select_browser():
     """
     Checks to see if geckodriver, chromedriver or both are in PATH.
-
     If both are present, asks the user to choose one.
-
     If neither are present, quits.
+
+        Returns:
+            webdriver (string): either "firefox" or "chrome"
     """
     path_dirs = os.getenv("PATH").split(os.pathsep)
     webdrivers = []
     for path_dir in path_dirs:
-        geckodriver = pathlib.Path(path_dir) / "geckodriver"
-        chromedriver = pathlib.Path(path_dir) / "chromedriver"
-        if geckodriver.is_file():
+        geckodriver_path = pathlib.Path(path_dir) / "geckodriver"
+        chromedriver_path = pathlib.Path(path_dir) / "chromedriver"
+
+        if sys.platform.startswith("win"):
+            geckodriver_path = geckodriver_path.parent / (geckodriver_path.name + ".exe")
+            chromedriver_path = chromedriver_path.parent / (chromedriver_path.name + ".exe")
+        
+        if geckodriver_path.is_file():
             webdrivers.append("firefox")
-        if chromedriver.is_file():
+        if chromedriver_path.is_file():
             webdrivers.append("chrome")
 
     if not webdrivers:
         print("Neither geckodriver nor chromedriver were found in PATH")
         print("Please install a web driver to PATH and try again.")
-        input("Press ENTER to quit...")
-        sys.exit()
+        press_enter_to_quit()
 
     if "firefox" in webdrivers and "chrome" in webdrivers:
         print(
