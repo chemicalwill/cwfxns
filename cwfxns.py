@@ -1,6 +1,5 @@
-from glob import glob
 import os
-import pathlib
+from pathlib import Path
 import random
 import sys
 
@@ -9,6 +8,26 @@ import praw
 import pyinputplus as pyip
 from twilio.base.exceptions import TwilioRestException
 import twilio.rest
+
+
+def find_alt_firefox_profile(profile_name):
+    """
+    Returns the file path of a specific Firefox profile
+
+        Params:
+            profile_name (string): the target profile
+
+        Returns:
+            profile_path (Path): full path object of the target profile 
+    """
+    if sys.platform.startswith("win"):
+        profiles_dir = Path.home() / Path("AppData/Roaming/Mozilla/Firefox/Profiles")
+    elif sys.platform.startswith("linux"):
+        profiles_dir = Path.home() / Path(".mozilla/firefox/")
+    for profile in os.listdir(profiles_dir):
+        if profile.endswith(profile_name):
+            profile_path = profiles_dir / Path(profile)
+            return profile_path
 
 
 def get_random_hot_image_post(subreddit):
@@ -61,8 +80,8 @@ def select_browser():
     path_dirs = os.getenv("PATH").split(os.pathsep)
     webdrivers = []
     for path_dir in path_dirs:
-        geckodriver_path = pathlib.Path(path_dir) / "geckodriver"
-        chromedriver_path = pathlib.Path(path_dir) / "chromedriver"
+        geckodriver_path = Path(path_dir) / "geckodriver"
+        chromedriver_path = Path(path_dir) / "chromedriver"
 
         if sys.platform.startswith("win"):
             geckodriver_path = geckodriver_path.parent / (geckodriver_path.name + ".exe")
