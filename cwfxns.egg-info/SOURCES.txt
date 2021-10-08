@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+cwfxns.egg-info/PKG-INFO
+cwfxns.egg-info/SOURCES.txt
+cwfxns.egg-info/dependency_links.txt
+cwfxns.egg-info/entry_points.txt
+cwfxns.egg-info/not-zip-safe
+cwfxns.egg-info/top_level.txt
