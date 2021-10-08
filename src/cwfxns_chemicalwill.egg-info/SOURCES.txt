@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/cwfxns/__init__.py
+src/cwfxns/cwfxns.py
+src/cwfxns_chemicalwill.egg-info/PKG-INFO
+src/cwfxns_chemicalwill.egg-info/SOURCES.txt
+src/cwfxns_chemicalwill.egg-info/dependency_links.txt
+src/cwfxns_chemicalwill.egg-info/top_level.txt
