@@ -18,7 +18,7 @@ def find_alt_firefox_profile(profile_name):
             profile_name (string): the target profile
 
         Returns:
-            profile_path (Path): full path object of the target profile 
+            profile_path (Path): full path object of the target profile
     """
     if sys.platform.startswith("win"):
         profiles_dir = Path.home() / Path("AppData/Roaming/Mozilla/Firefox/Profiles")
@@ -28,6 +28,13 @@ def find_alt_firefox_profile(profile_name):
         if profile.endswith(profile_name):
             profile_path = profiles_dir / Path(profile)
             return profile_path
+    # print the available profiles if profile_name doesn't exist
+    #   trim off the period, and exit the program
+    print(f"Could not find profile '{profile_name}'. Available profiles:")
+    for profile in os.listdir(profiles_dir):
+        leading_str, profile_name = os.path.splitext(profile)
+        print(f" - {profile_name[1:]}")
+    press_enter_to_quit()
 
 
 def get_random_hot_image_post(subreddit):
@@ -84,9 +91,13 @@ def select_browser():
         chromedriver_path = Path(path_dir) / "chromedriver"
 
         if sys.platform.startswith("win"):
-            geckodriver_path = geckodriver_path.parent / (geckodriver_path.name + ".exe")
-            chromedriver_path = chromedriver_path.parent / (chromedriver_path.name + ".exe")
-        
+            geckodriver_path = geckodriver_path.parent / (
+                geckodriver_path.name + ".exe"
+            )
+            chromedriver_path = chromedriver_path.parent / (
+                chromedriver_path.name + ".exe"
+            )
+
         if geckodriver_path.is_file():
             webdrivers.append("firefox")
         if chromedriver_path.is_file():
