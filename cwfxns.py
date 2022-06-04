@@ -37,17 +37,17 @@ def find_alt_firefox_profile(profile_name):
     press_enter_to_quit()
 
 
-def get_random_hot_image_post(subreddit):
+def get_random_reddit_post(subreddit):
     """
-    Scrapes the top 10 "hot" posts in a given subreddit and picks one at random
+    Scrapes a random post from a subreddit.
+    (Requires the appropriate environment variables to be configured for praw)
 
         Parameters:
             subreddit (string): the subreddit to scrape from
 
         Returns:
-            (post.title, post.url)
-            post.title (string): the text title of the randomly selected post
-            post.url (string): the url of the randomly selected post's image
+            random_submission (praw.Submission()): random post from subreddit
+
     """
     PRAW_CLIENT_ID = os.getenv("PRAW_CLIENT_ID")
     PRAW_CLIENT_SECRET = os.getenv("PRAW_CLIENT_SECRET")
@@ -59,12 +59,8 @@ def get_random_hot_image_post(subreddit):
         user_agent=PRAW_USER_AGENT,
     )
 
-    while True:
-        post = random.choice(
-            [post for post in REDDIT.subreddit(subreddit).hot(limit=10)]
-        )
-        if post.url.endswith((".jpg", ".png", ".gif")):
-            return (post.title, post.url)
+    random_submission = REDDIT.subreddit(subreddit).random()
+    return(random_submission)    
 
 
 def press_enter_to_quit():
