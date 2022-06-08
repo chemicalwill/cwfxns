@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import platform
 import random
+import subprocess
 import sys
 import time
 
@@ -135,22 +136,33 @@ def nordvpn():
 
     if _OS in ("Linux", "Darwin"):
         ser = random.choice([v for v in server_dict.values()])
-        command = f"nordvpn connect {ser} > /dev/null 2>&1"
+        command = f"nordvpn connect {ser}".split()
     elif _OS == "Windows":
         os.chdir("C:\\Program Files\\NordVPN")
         ser = random.choice([k for k in server_dict.keys()])
-        command = f"nordvpn connect -c -g {ser}"
+        command = f"nordvpn -c -g {ser}".split()
 
-    os.system(command)
+    subprocess.run(command, stdout=subprocess.DEVNULL)
     time.sleep(10)
     return
 
 
-def press_enter_to_quit():
+def press_enter_to_quit(command=None):
     """
     Prompts the user to press Enter/Return and exits the terminal
+
+        Params:
+            command (string): optional system command to execute prior to quitting
+
+        Example:
+            >>> press_enter_to_quit(command='nordvpn -d')
+
+            Press ENTER to quit...
+            #   and will disconnect from nordvpn on exit
     """
     input("\nPress ENTER to quit...")
+    if command:
+        subprocess.run(command.split(), stdout=subprocess.DEVNULL)
     sys.exit()
 
 
