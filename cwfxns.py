@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
+import platform
 import random
 import sys
+import time
 
-from exif import Image
 import praw
 import pyinputplus as pyip
 from twilio.base.exceptions import TwilioRestException
@@ -60,7 +61,89 @@ def get_random_reddit_post(subreddit):
     )
 
     random_submission = REDDIT.subreddit(subreddit).random()
-    return(random_submission)    
+    return random_submission
+
+
+def nordvpn():
+    """
+    Connects to a random Nord VPN server, independent of OS.
+    """
+    server_dict = {
+        "Albania": "al",
+        "Argentina": "ar",
+        "Australia": "au",
+        "Austria": "at",
+        "Belgium": "be",
+        "Bosnia and Herzegovina": "ba",
+        "Brazil": "br",
+        "Bulgaria": "bg",
+        "Canada": "ca",
+        "Chile": "cl",
+        "Costa Rica": "cr",
+        "Croatia": "hr",
+        "Cyprus": "cy",
+        "Czech Republic": "cz",
+        "Denmark": "dk",
+        "Estonia": "ee",
+        "Finland": "fi",
+        "France": "fr",
+        "Georgia": "ge",
+        "Germany": "de",
+        "Greece": "gr",
+        "Hong Kong": "hk",
+        "Hungary": "hu",
+        "Iceland": "is",
+        "India": "in",
+        "Indonesia": "id",
+        "Ireland": "ie",
+        "Israel": "il",
+        "Italy": "it",
+        "Japan": "jp",
+        "Latvia": "lv",
+        "Lithuania": "lt",
+        "Luxembourg": "lu",
+        "Malaysia": "my",
+        "Mexico": "mx",
+        "Moldova": "md",
+        "Netherlands": "nl",
+        "New Zealand": "nz",
+        "North Macedonia": "mk",
+        "Norway": "no",
+        "Poland": "pl",
+        "Portugal": "pt",
+        "Romania": "ro",
+        "Serbia": "rs",
+        "Singapore": "sg",
+        "Slovakia": "sk",
+        "Slovenia": "si",
+        "South Africa": "za",
+        "South Korea": "kr",
+        "Spain": "es",
+        "Sweden": "se",
+        "Switzerland": "ch",
+        "Taiwan": "tw",
+        "Thailand": "th",
+        "Turkey": "tr",
+        "Ukraine": "ua",
+        "United Arab Emirates": "ae",
+        "United Kingdom": "gb",
+        "United States": "us",
+        "Vietnam": "vn",
+    }
+
+    _OS = platform.system()
+
+    if _OS in ("Linux", "Darwin"):
+        ser = random.choice([v for v in server_dict.values()])
+        command = f"nordvpn connect {ser} > /dev/null 2>&1"
+    elif _OS == "Windows":
+        os.chdir("C:\\Program Files\\NordVPN")
+        ser = random.choice([k for k in server_dict.keys()])
+        command = f"nordvpn connect -c -g {ser}"
+
+    os.system(command)
+    time.sleep(10)
+    return
 
 
 def press_enter_to_quit():
