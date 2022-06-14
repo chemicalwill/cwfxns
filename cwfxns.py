@@ -68,6 +68,10 @@ def get_random_reddit_post(subreddit):
 def nordvpn(region=None):
     """
     Connects to a random Nord VPN server, independent of OS.
+
+    Params:
+        region (string): continent, if desired (defaults to None)
+
     """
     server_dict = {
         "AF": {
