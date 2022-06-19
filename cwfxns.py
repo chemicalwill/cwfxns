@@ -70,8 +70,7 @@ def nordvpn(region=None):
     Connects to a random Nord VPN server, independent of OS.
 
     Params:
-        region (string): continent, if desired (defaults to None)
-
+        region (string): continent as 2-letter abbreviation
     """
     server_dict = {
         "AF": {
@@ -149,13 +148,15 @@ def nordvpn(region=None):
     }
 
     if not region:
-        region = random.choice([reg for reg in server_dict.keys()])
-    server_dict = server_dict[region]
+        server_countries = {}
+        for country in server_dict.values():
+            server_countries.update(country)
+        server_dict = server_countries
 
     _OS = platform.system()
     if _OS in ("Linux", "Darwin"):
         ser = random.choice([v for v in server_dict.values()])
-        command = f"nordvpn connect {ser}".split()
+        command = f"nordvpn c {ser}".split()
     elif _OS == "Windows":
         os.chdir("C:\\Program Files\\NordVPN")
         ser = random.choice([k for k in server_dict.keys()])
