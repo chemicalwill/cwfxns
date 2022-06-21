@@ -65,12 +65,21 @@ def get_random_reddit_post(subreddit):
     return random_submission
 
 
-def nordvpn(region=None):
+def nordvpn(region=None, country=None):
     """
-    Connects to a random Nord VPN server, independent of OS.
+    Connects to a NordVPN server
 
-    Params:
-        region (string): continent as 2-letter abbreviation
+        Params:
+            region (string): 2-letter continent abbreviation in ('AF', 'AS', 'EU', 'NA', 'OC', 'SA')
+            country (string): either name or ISO 3166-1 alpha-2 code (ex. 'Mexico' or 'mx')
+
+        Raises:
+            SyntaxError: if both 'region' and 'country' kwargs are passed, raises a SyntaxError
+
+        Example:
+            >>> nordvpn(region='NA')
+            >>> nordvpn(country='mx')
+            >>> nordvpn(country='Mexico')
     """
     server_dict = {
         "AF": {
@@ -147,20 +156,42 @@ def nordvpn(region=None):
         },
     }
 
-    if not region:
-        server_countries = {}
-        for country in server_dict.values():
-            server_countries.update(country)
-        server_dict = server_countries
+    if region and country:
+        raise SyntaxError(f"Something about too many kwargs")
+    elif region:
+        region = region.upper()
+        server_dict = server_dict[region]
+    elif country:
+        if len(country) == 2:
+            country = country.lower()
+        country_dict = {}
+        for ser in server_dict.values():
+            country_dict.update(ser)
+        server_dict = country_dict
+    else:
+        random_region = random.choice(tuple(server_dict.keys()))
+        server_dict = server_dict[random_region]
 
     _OS = platform.system()
-    if _OS in ("Linux", "Darwin"):
-        ser = random.choice([v for v in server_dict.values()])
-        command = f"nordvpn c {ser}".split()
-    elif _OS == "Windows":
-        os.chdir("C:\\Program Files\\NordVPN")
-        ser = random.choice([k for k in server_dict.keys()])
-        command = f"nordvpn -c -g {ser}".split()
+    if _OS == "Windows":
+        if country:
+            if country not in server_dict.keys():
+                country = [
+                    name for name, abbrev in server_dict.items() if country == abbrev
+                ].pop()
+        else:
+            country = random.choice(tuple(server_dict.keys()))
+        command = f"nordvpn -c {country}".split()
+
+    elif _OS in ("Linux", "Darwin"):
+        if country:
+            if country not in server_dict.values():
+                country = [
+                    abbrev for name, abbrev in server_dict.items() if country == name
+                ].pop()
+        else:
+            country = random.choice(tuple(server_dict.values()))
+        command = f"nordvpn c {country}".split()
 
     subprocess.run(command, stdout=subprocess.DEVNULL)
     time.sleep(10)
