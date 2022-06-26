@@ -157,7 +157,7 @@ def nordvpn(region=None, country=None):
     }
 
     if region and country:
-        raise SyntaxError(f"Something about too many kwargs")
+        raise SyntaxError(f"Both 'region' and 'country' kwargs passed.")
     elif region:
         region = region.upper()
         server_dict = server_dict[region]
@@ -181,6 +181,10 @@ def nordvpn(region=None, country=None):
                 ].pop()
         else:
             country = random.choice(tuple(server_dict.keys()))
+        # passing the command 'nordvpn' requires being in 'C:\Program Files\NordVPN'
+        #   I don't like using os.chdir() for a shell command, so I added it to Windows PATH
+        #       you can either add the NordVPN folder to PATH or uncomment the next line
+        # os.chdir("C:\Program Files\NordVPN")
         command = f"nordvpn -c {country}".split()
 
     elif _OS in ("Linux", "Darwin"):
