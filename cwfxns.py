@@ -65,6 +65,61 @@ def get_random_reddit_post(subreddit):
     return random_submission
 
 
+def get_simple_qmk_tap_dance(tap, hold):
+    """
+    "Builds" a string for a tap vs. hold QMK Tap Dance that can be copypasted
+        into your keymap.c or wherever you store your tap dances.
+
+        Params:
+            tap (string): the name of the key you want to send on tap (ex. "left" or "r")
+            hold (string): the name of the key you want to send on hold (ex. "esc" or "home")
+        
+        Returns:
+            full_tap_dance (string): tap dance finished/reset functions, macro, and action
+    """
+
+    tap, TAP = tap.lower(), tap.upper()
+    hold, HOLD = hold.lower(), hold.upper()
+
+    tap_dance_functions = (
+        f"\nvoid {tap}_finished (qk_tap_dance_state_t *state, void *user_data);"
+        f"\nvoid {tap}_reset (qk_tap_dance_state_t *state, void *user_data);"
+    )
+
+    tap_dance_macro = (
+        f"\n\nstatic tap {tap}tap_state = {{"
+            "\n    .is_press_action = true,"
+            "\n    .state = 0"
+        "\n};"
+        f"\nvoid {tap}_finished (qk_tap_dance_state_t *state, void *user_data) {{"
+            f"\n    {tap}tap_state.state = cur_dance(state);"
+            f"\n    switch ({tap}tap_state.state) {{"
+                "\n        case SINGLE_TAP:"
+                    f"\n            register_code(KC_{TAP});"
+                    "\n            break;"
+                "\n        case SINGLE_HOLD:"
+                    f"\n            tap_code(KC_{HOLD});"
+                    "\n            break;"
+            "\n    }"
+        "\n};"
+        f"\nvoid {tap}_reset (qk_tap_dance_state_t *state, void *user_data) {{"
+            f"\n    switch ({tap}tap_state.state) {{"
+                "\n        case SINGLE_TAP:"
+                    f"\n            unregister_code(KC_{TAP});"
+                    "\n            break;"
+            "\n    }"
+            f"\n    {tap}tap_state.state = 0;"
+        "\n};"
+    )
+
+    tap_dance_action = (
+        f"\n\n[{TAP}_{HOLD}] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, {tap}_finished, {tap}_reset),"
+    )
+
+    full_tap_dance = tap_dance_functions + tap_dance_macro + tap_dance_action
+    return full_tap_dance
+    
+
 def nordvpn(region=None, country=None):
     """
     Connects to a NordVPN server
